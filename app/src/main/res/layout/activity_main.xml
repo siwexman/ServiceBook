@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:textSize="23dp"
-        android:layout_width="100dp"
-        
-        android:gravity="center" />
+<!--    <Button-->
+<!--        android:textSize="23dp"-->
+<!--        android:layout_width="100dp"-->
+<!--        -->
+<!--        android:gravity="center" />-->
 
 </LinearLayout>
