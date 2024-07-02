@@ -1,5 +1,6 @@
 package com.example.servicebook
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,9 +44,14 @@ import androidx.compose.ui.unit.sp
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        fun navigate() {
+            val navigate = Intent(this, AddNewCarActivity::class.java)
+            startActivity(navigate)
+        }
+
         super.onCreate(savedInstanceState)
         setContent {
             ServiceBookTheme {
@@ -54,7 +60,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ServiceBookPreview()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .fillMaxWidth()
+                    ) {
+                        TopAppBar(MaterialTheme.shapes.extraSmall)
+                        CarItem()
+                        AddCar(onClick = { navigate() })
+                    }
                 }
             }
         }
@@ -110,8 +124,14 @@ fun CarItem(modifier: Modifier = Modifier) {
             Text(
                 text = "Car Name",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier.padding(5.dp, 5.dp, 5.dp, 0.dp)
             )
+            Text(
+                text = "RZ 9992A",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+
             if (expanded) {
                 ExpandedOptions()
             }
@@ -120,7 +140,9 @@ fun CarItem(modifier: Modifier = Modifier) {
                 ItemButton(
                     imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                     expanded = expanded,
-                    onClick = { expanded = !expanded },
+                    onClick = {
+                        expanded = !expanded
+                    },
                     modifier = modifier
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -130,7 +152,7 @@ fun CarItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddCar(modifier: Modifier = Modifier) {
+fun AddCar(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
         shape = Shapes.medium,
         modifier = modifier
@@ -143,7 +165,7 @@ fun AddCar(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(id = R.string.add_new_car),
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.titleLarge,
                 fontSize = 20.sp,
                 modifier = modifier.padding(top = 5.dp)
             )
@@ -154,7 +176,7 @@ fun AddCar(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.weight(1f))
                 ItemButton(
                     imageVector = Icons.Filled.Add,
-                    onClick = { /*TODO*/ },
+                    onClick = onClick,
                     modifier = modifier
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -163,15 +185,22 @@ fun AddCar(modifier: Modifier = Modifier) {
     }
 }
 
+//@Composable
+//fun GoToAddNewCarActivity() {
+//    val context = LocalContext.current
+//    val intent = Intent(context, NewCarActivity::class.java)
+//    context.startActivity(intent)
+//}
+
 @Composable
 fun ItemButton(
-    imageVector: ImageVector,
-    expanded: Boolean = false,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    expanded: Boolean = false,
+    imageVector: ImageVector,
+    modifier: Modifier,
 ) {
     IconButton(
-        onClick = onClick,
+        onClick,
         modifier = modifier
     ) {
         Icon(
@@ -181,7 +210,6 @@ fun ItemButton(
         )
     }
 }
-
 
 @Composable
 fun ExpandedOptions(modifier: Modifier = Modifier) {
@@ -221,7 +249,7 @@ fun ServiceBookPreview() {
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
             CarItem()
-            AddCar()
+            AddCar(onClick = {})
         }
     }
 }
