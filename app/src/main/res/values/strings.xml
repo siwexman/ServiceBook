@@ -4,4 +4,12 @@
     <string name="repairs">Repairs</string>
     <string name="add_new_car">Add New Car</string>
     <string name="title_activity_add_new_car">AddNewCarActivity</string>
+    <string name="car_name">Car Name:</string>
+    <string name="engine">Engine:</string>
+    <string name="oil">Oil:</string>
+    <string name="tire_pressure">Tire Pressure:</string>
+    <string name="fuel_capacity">Fuel Capacity:</string>
+    <string name="registration_numbers">Registration Number:</string>
+    <string name="title_activity_active_reminders">ActiveRemindersActivity</string>
+    <string name="title_activity_repairs">RepairsActivity</string>
 </resources>

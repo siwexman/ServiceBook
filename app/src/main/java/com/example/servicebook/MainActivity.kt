@@ -47,8 +47,8 @@ import com.example.servicebook.ui.theme.Shapes
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        fun navigate() {
-            val navigate = Intent(this, AddNewCarActivity::class.java)
+        fun <T> navigate(targetActivity: Class<T>) {
+            val navigate = Intent(this, targetActivity)
             startActivity(navigate)
         }
 
@@ -66,8 +66,11 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                     ) {
                         TopAppBar(MaterialTheme.shapes.extraSmall)
-                        CarItem()
-                        AddCar(onClick = { navigate() })
+                        CarItem(
+                            activeOnClick = { navigate(ActiveRemindersActivity::class.java) },
+                            repairsOnClick = { navigate(RepairsActivity::class.java) }
+                        )
+                        AddCar(onClick = { navigate(AddNewCarActivity::class.java) })
                     }
                 }
             }
@@ -104,7 +107,11 @@ fun TopAppBar(shape: CornerBasedShape, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun CarItem(modifier: Modifier = Modifier) {
+fun CarItem(
+    activeOnClick: () -> Unit,
+    repairsOnClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -133,7 +140,7 @@ fun CarItem(modifier: Modifier = Modifier) {
             )
 
             if (expanded) {
-                ExpandedOptions()
+                ExpandedOptions(activeOnClick = activeOnClick, repairsOnClick = repairsOnClick)
             }
             Row {
                 Spacer(modifier = Modifier.weight(1f))
@@ -185,13 +192,6 @@ fun AddCar(onClick: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-//@Composable
-//fun GoToAddNewCarActivity() {
-//    val context = LocalContext.current
-//    val intent = Intent(context, NewCarActivity::class.java)
-//    context.startActivity(intent)
-//}
-
 @Composable
 fun ItemButton(
     onClick: () -> Unit,
@@ -212,7 +212,11 @@ fun ItemButton(
 }
 
 @Composable
-fun ExpandedOptions(modifier: Modifier = Modifier) {
+fun ExpandedOptions(
+    activeOnClick: () -> Unit,
+    repairsOnClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -220,14 +224,14 @@ fun ExpandedOptions(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(0.dp, 10.dp)
     ) {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = activeOnClick) {
             Text(
                 text = stringResource(id = R.string.active),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold
             )
         }
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = repairsOnClick) {
             Text(
                 text = stringResource(id = R.string.repairs),
                 style = MaterialTheme.typography.labelSmall,
@@ -248,7 +252,7 @@ fun ServiceBookPreview() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
-            CarItem()
+            CarItem(activeOnClick = {}, repairsOnClick = {})
             AddCar(onClick = {})
         }
     }
