@@ -47,10 +47,37 @@ import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
 import android.content.Context
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalContext
+import com.example.servicebook.data.Repair
+import java.io.Serializable
+import java.text.SimpleDateFormat
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+//        List<Car> from database
+        val repairs = listOf(
+            Repair(
+                "Klocki",
+                200.0,
+                java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2024").time)
+            ),
+            Repair(
+                "Olej",
+                300.0,
+                java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2024").time)
+            ),
+            Repair(
+                "Sprzeglo",
+                1000.0,
+                java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2024").time)
+            )
+        )
+        val car1 = Car("Toyota", 1.4, "KM20", 2.2, 40.0, "RZ9040E", repairs)
+        val car2 = Car("BMW", 1.4, "KM20", 2.2, 40.0, "RZ9SAFJE")
+        val car3 = Car("Audi", 1.4, "KM20", 2.2, 40.0, "KK349SUI")
+        val cars = listOf(car1, car2, car3)
+
 
         fun <T> navigate(targetActivity: Class<T>) {
             val navigate = Intent(this, targetActivity)
@@ -71,12 +98,12 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                     ) {
                         TopAppBar(MaterialTheme.shapes.extraSmall)
-                        CarItem(
-                            activeOnClick = { navigate(ActiveRemindersActivity::class.java) },
-                            repairsOnClick = { navigate(RepairsActivity::class.java) }
-                        )
-                        AddItem(onClick = { navigate(AddNewCarActivity::class.java) }, "car")
-//                        CarList()
+                        ScrollableList(cars = cars, footerContent = {
+                            AddItem(
+                                onClick = { navigate(AddNewCarActivity::class.java) },
+                                addNewItem = "car"
+                            )
+                        })
                     }
                 }
             }
@@ -135,12 +162,12 @@ fun CarItem(
             )
         ) {
             Text(
-                text = "Car Name",
+                text = car.Name,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(5.dp, 5.dp, 5.dp, 0.dp)
             )
             Text(
-                text = "RZ 9992A",
+                text = car.RegistrationNnumbers,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -149,11 +176,11 @@ fun CarItem(
                 ExpandedOptions(activeOnClick =
                 {
                     val intent = Intent(context, ActiveRemindersActivity::class.java)
-                    intent.putExtra("carId", car.Id)
+                    intent.putExtra("car", car as Serializable)
                     context.startActivity(intent)
                 }, repairsOnClick = {
-                    val intent = Intent(context, ActiveRemindersActivity::class.java)
-                    intent.putExtra("carId", car.Id)
+                    val intent = Intent(context, RepairsActivity::class.java)
+                    intent.putExtra("car", car as Serializable)
                     context.startActivity(intent)
                 })
             }
@@ -176,7 +203,7 @@ fun CarItem(
 @Composable
 fun AddItem(onClick: () -> Unit, addNewItem: String, modifier: Modifier = Modifier) {
     Card(
-        shape = Shapes.medium,
+        shape = Shapes.extraSmall,
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 0.dp, start = 10.dp, end = 10.dp, bottom = 10.dp)
@@ -269,8 +296,8 @@ fun ExpandedOptions(
 fun ScrollableList(
     cars: List<Car>,
     footerContent: @Composable () -> Unit,
-    context: Context
 ) {
+    val context = LocalContext.current
     Column {
         LazyColumn(
             modifier = Modifier
@@ -287,6 +314,11 @@ fun ScrollableList(
 @Preview(showBackground = true)
 @Composable
 fun ServiceBookPreview() {
+    val car1 = Car("Toyota", 1.4, "KM20", 2.2, 40.0, "RZ9040E")
+    val car2 = Car("VW", 1.4, "KM20", 2.2, 40.0, "RZ9040E")
+    val car3 = Car("Audi", 1.4, "KM20", 2.2, 40.0, "RZ9040E")
+    val cars = listOf(car1, car2, car3)
+
     ServiceBookTheme(darkTheme = true, dynamicColor = false) {
         Column(
             modifier = Modifier
@@ -294,6 +326,7 @@ fun ServiceBookPreview() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
+            ScrollableList(cars = cars) { AddItem(onClick = { /*TODO*/ }, addNewItem = "car") }
 
         }
     }

@@ -24,10 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
 import androidx.compose.foundation.lazy.items
+import com.example.servicebook.data.Car
+import com.example.servicebook.data.Repair
 
 class RepairsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val car: Car? = intent.getSerializableExtra("car") as? Car
+
         setContent {
             ServiceBookTheme {
                 // A surface container using the 'background' color from the theme
@@ -35,7 +39,7 @@ class RepairsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    car?.Repairs?.let { RepairsFull(repairs = it) }
                 }
             }
         }
@@ -126,15 +130,33 @@ fun SummaryFooter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RepairsContent(items: List<String>) {
-    Column(verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            items(items) { item ->
+fun RepairsContent(repairs: List<Repair>) {
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            items(repairs) { repair ->
                 RepairItem()
             }
         }
         SummaryFooter()
+    }
+}
+
+@Composable
+fun RepairsFull(repairs: List<Repair>) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .fillMaxWidth()
+    ) {
+        RepairsContent(repairs = repairs)
     }
 }
 
@@ -150,7 +172,7 @@ fun GreetingPreview3() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
-            RepairsContent(items = items)
+//            RepairsContent(repairs = items)
         }
     }
 }

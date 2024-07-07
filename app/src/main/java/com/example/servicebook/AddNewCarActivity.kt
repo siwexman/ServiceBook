@@ -150,9 +150,9 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
         Button(
             modifier = Modifier.padding(top = 5.dp),
             onClick = {
-                val carEngine = engine.toFloatOrNull()?.let { abs(it) }
-                val carTirePressure = abs(tirePressure.toFloat())
-                val carFuelCapacity = abs(fuelCapacity.toFloat())
+                val carEngine = engine.toDoubleOrNull()?.let { abs(it) }
+                val carTirePressure = abs(tirePressure.toDouble())
+                val carFuelCapacity = abs(fuelCapacity.toDouble())
                 val plateNumbers = registrationNumber.uppercase()
 
 

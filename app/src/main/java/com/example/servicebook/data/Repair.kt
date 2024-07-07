@@ -4,6 +4,6 @@ import java.sql.Date
 
 data class Repair(
     val Name: String,
-    val Price: Float,
+    val Price: Double,
     val DateOfRepair: Date
 )
