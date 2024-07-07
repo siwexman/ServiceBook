@@ -17,4 +17,7 @@
     <string name="add_new_reminder">Add New Reminder</string>
     <string name="price">Price:</string>
     <string name="repair_date">Repair Date:</string>
+    <string name="add_new_repair">Add New Repair</string>
+    <string name="title">Title</string>
+    <string name="confirm">Confirm</string>
 </resources>
