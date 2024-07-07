@@ -1,6 +1,7 @@
 package com.example.servicebook.data
 
 data class Car(
+    val Id: Int,
     val Name: String,
     val Engine: Float,
     val Oil: String,

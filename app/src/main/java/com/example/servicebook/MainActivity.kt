@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -41,8 +42,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.servicebook.data.Car
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
+import android.content.Context
+import androidx.compose.foundation.lazy.items
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +75,8 @@ class MainActivity : ComponentActivity() {
                             activeOnClick = { navigate(ActiveRemindersActivity::class.java) },
                             repairsOnClick = { navigate(RepairsActivity::class.java) }
                         )
-                        AddCar(onClick = { navigate(AddNewCarActivity::class.java) })
+                        AddItem(onClick = { navigate(AddNewCarActivity::class.java) }, "car")
+//                        CarList()
                     }
                 }
             }
@@ -108,8 +114,8 @@ fun TopAppBar(shape: CornerBasedShape, modifier: Modifier = Modifier) {
 
 @Composable
 fun CarItem(
-    activeOnClick: () -> Unit,
-    repairsOnClick: () -> Unit,
+    car: Car,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -140,7 +146,16 @@ fun CarItem(
             )
 
             if (expanded) {
-                ExpandedOptions(activeOnClick = activeOnClick, repairsOnClick = repairsOnClick)
+                ExpandedOptions(activeOnClick =
+                {
+                    val intent = Intent(context, ActiveRemindersActivity::class.java)
+                    intent.putExtra("carId", car.Id)
+                    context.startActivity(intent)
+                }, repairsOnClick = {
+                    val intent = Intent(context, ActiveRemindersActivity::class.java)
+                    intent.putExtra("carId", car.Id)
+                    context.startActivity(intent)
+                })
             }
             Row {
                 Spacer(modifier = Modifier.weight(1f))
@@ -159,7 +174,7 @@ fun CarItem(
 }
 
 @Composable
-fun AddCar(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AddItem(onClick: () -> Unit, addNewItem: String, modifier: Modifier = Modifier) {
     Card(
         shape = Shapes.medium,
         modifier = modifier
@@ -170,12 +185,21 @@ fun AddCar(onClick: () -> Unit, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(id = R.string.add_new_car),
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 20.sp,
-                modifier = modifier.padding(top = 5.dp)
-            )
+            if (addNewItem == "car") {
+                Text(
+                    text = stringResource(id = R.string.add_new_car),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 20.sp,
+                    modifier = modifier.padding(top = 5.dp)
+                )
+            } else if (addNewItem == "reminder") {
+                Text(
+                    text = stringResource(id = R.string.add_new_reminder),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 20.sp,
+                    modifier = modifier.padding(top = 5.dp)
+                )
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -241,6 +265,24 @@ fun ExpandedOptions(
     }
 }
 
+@Composable
+fun ScrollableList(
+    cars: List<Car>,
+    footerContent: @Composable () -> Unit,
+    context: Context
+) {
+    Column {
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            // foreach car in cars => CarItem
+            items(cars) { car -> CarItem(car = car, context = context) }
+        }
+        footerContent()
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -252,8 +294,7 @@ fun ServiceBookPreview() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
-            CarItem(activeOnClick = {}, repairsOnClick = {})
-            AddCar(onClick = {})
+
         }
     }
 }

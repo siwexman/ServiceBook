@@ -12,4 +12,9 @@
     <string name="registration_numbers">Registration Number:</string>
     <string name="title_activity_active_reminders">ActiveRemindersActivity</string>
     <string name="title_activity_repairs">RepairsActivity</string>
+    <string name="expiration_date">Expiration Date:</string>
+    <string name="renew">Renew</string>
+    <string name="add_new_reminder">Add New Reminder</string>
+    <string name="price">Price:</string>
+    <string name="repair_date">Repair Date:</string>
 </resources>
