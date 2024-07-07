@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +24,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.servicebook.data.Reminder
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 class ActiveRemindersActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +47,14 @@ class ActiveRemindersActivity : ComponentActivity() {
                             .fillMaxWidth()
                     ) {
                         TopAppBar(MaterialTheme.shapes.extraSmall)
-                        Reminder()
-                        AddItem(onClick = {}, "reminder")
+                        Reminder(
+                            "Title Reminder",
+                            java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2024").time)
+                        )
+                        AddItem(
+                            onClick = {},
+                            "reminder"
+                        )
                     }
                 }
             }
@@ -51,7 +63,11 @@ class ActiveRemindersActivity : ComponentActivity() {
 }
 
 @Composable
-fun Reminder(modifier: Modifier = Modifier) {
+fun Reminder(
+    title: String,
+    date: String,
+    modifier: Modifier = Modifier
+) {
     Card(
         shape = Shapes.medium,
         modifier = modifier
@@ -66,7 +82,7 @@ fun Reminder(modifier: Modifier = Modifier) {
                 .padding(5.dp, 10.dp)
         ) {
             Text(
-                text = "Title Reminder",
+                text = title,
                 style = MaterialTheme.typography.titleLarge,
                 fontSize = 20.sp,
                 modifier = modifier.padding(0.dp, 5.dp)
@@ -79,16 +95,28 @@ fun Reminder(modifier: Modifier = Modifier) {
                     .padding(10.dp, 5.dp)
             ) {
                 Text(text = stringResource(R.string.expiration_date))
-                Text(text = "20.11.2024")
+                Text(text = date)
             }
             Row {
                 Button(onClick = { /*TODO*/ }) {
-                    Text(text = stringResource(id = R.string.renew))
+                    Text(text = stringResource(R.string.renew))
                 }
             }
         }
     }
 }
+
+@Composable
+fun ScrollableListOfReminders(reminders: List<Reminder>) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn {
+            items(reminders) { reminder ->
+                Reminder(reminder.Title, reminder.Date)
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
@@ -100,7 +128,10 @@ fun GreetingPreview2() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
-            Reminder()
+            Reminder(
+                "Title Reminder",
+                "20-11-2024"
+            )
             AddItem(onClick = {}, "reminder")
         }
     }

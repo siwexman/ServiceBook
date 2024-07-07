@@ -156,6 +156,7 @@ fun RepairsFull(repairs: List<Repair>) {
             .fillMaxSize()
             .fillMaxWidth()
     ) {
+        TopAppBar(MaterialTheme.shapes.extraSmall)
         RepairsContent(repairs = repairs)
     }
 }
@@ -171,8 +172,7 @@ fun GreetingPreview3() {
                 .fillMaxSize()
                 .fillMaxWidth()
         ) {
-            TopAppBar(MaterialTheme.shapes.extraSmall)
-//            RepairsContent(repairs = items)
+            
         }
     }
 }
