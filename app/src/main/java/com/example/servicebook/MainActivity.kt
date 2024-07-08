@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.servicebook.data.Car
+import com.example.servicebook.data.Reminder
 import com.example.servicebook.data.Repair
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
@@ -72,7 +73,18 @@ class MainActivity : ComponentActivity() {
                 java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2024").time)
             )
         )
-        val car1 = Car("Toyota", 1.4, "KM20", 2.2, 40.0, "RZ9040E", repairs)
+        val reminders = listOf(
+            Reminder(
+                "Badanie Techniczne",
+                java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("21-11-2025").time)
+            ),
+            Reminder(
+                "Ubezpieczenie - zapłacić",
+                java.sql.Date(SimpleDateFormat("dd-MM-yyyy").parse("10-07-2024").time)
+            )
+        )
+
+        val car1 = Car("Toyota", 1.4, "KM20", 2.2, 40.0, "RZ9040E", repairs, reminders)
         val car2 = Car("BMW", 1.4, "KM20", 2.2, 40.0, "RZ9SAFJE")
         val car3 = Car("Audi", 1.4, "KM20", 2.2, 40.0, "KK349SUI")
         val cars = listOf(car1, car2, car3)

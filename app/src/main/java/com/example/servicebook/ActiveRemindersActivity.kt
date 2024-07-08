@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -50,11 +49,11 @@ import com.example.servicebook.data.Reminder
 import com.example.servicebook.ui.theme.ServiceBookTheme
 import com.example.servicebook.ui.theme.Shapes
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
 class ActiveRemindersActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val car: Car? = intent.getSerializableExtra("car") as? Car
@@ -78,10 +77,10 @@ class ActiveRemindersActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReminderItem(
-    title: String,
-    date: Date,
+    reminder: Reminder,
     modifier: Modifier = Modifier
 ) {
+    var date by remember { mutableStateOf(reminder.Date) }
     val dateFormat = SimpleDateFormat("dd-MM-yyyy")
     val currentDate = Date()
     val calendar = Calendar.getInstance()
@@ -90,14 +89,16 @@ fun ReminderItem(
     val sevenDaysBefore = calendar.time
 
     val isExpiringSoon = currentDate.after(sevenDaysBefore) && currentDate.before(date)
-    val backgroundColor = if (isExpiringSoon) Color.Red else MaterialTheme.colorScheme.background
+    val containerColor =
+        if (isExpiringSoon) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.error)
+        else CardDefaults.cardColors()
 
     Card(
         shape = Shapes.medium,
+        colors = containerColor,
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 0.dp, start = 10.dp, end = 10.dp, bottom = 10.dp)
-            .background(backgroundColor)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,7 +108,7 @@ fun ReminderItem(
                 .padding(5.dp, 10.dp)
         ) {
             Text(
-                text = title,
+                text = reminder.Title,
                 style = MaterialTheme.typography.titleLarge,
                 fontSize = 20.sp,
                 modifier = modifier.padding(0.dp, 5.dp)
@@ -123,7 +124,9 @@ fun ReminderItem(
                 Text(text = dateFormat.format(date).toString())
             }
             Row {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    date = reminder.AddOneYear()
+                }) {
                     Text(text = stringResource(R.string.renew))
                 }
             }
@@ -154,7 +157,7 @@ fun AddReminder(car: Car, reminders: MutableList<Reminder>, modifier: Modifier =
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                stringResource(R.string.add_new_repair),
+                stringResource(R.string.add_new_reminder),
                 style = MaterialTheme.typography.titleLarge,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(5.dp)
@@ -183,7 +186,7 @@ fun AddReminder(car: Car, reminders: MutableList<Reminder>, modifier: Modifier =
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = modifier
                             .fillMaxWidth()
-                            .padding(5.dp)
+                            .padding(20.dp, 10.dp)
                     ) {
                         Text(text = if (date.isEmpty()) "No date selected" else "Selected date: $date")
                         Button(onClick = {
@@ -223,6 +226,7 @@ fun AddReminder(car: Car, reminders: MutableList<Reminder>, modifier: Modifier =
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScrollableRemindersList(car: Car, modifier: Modifier = Modifier) {
     val reminders = remember { mutableStateListOf(*car.Reminders.toTypedArray()) }
@@ -237,12 +241,13 @@ fun ScrollableRemindersList(car: Car, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
         ) {
             items(reminders) { reminder ->
-                ReminderItem(title = reminder.Title, date = reminder.Date)
+                ReminderItem(reminder)
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RemindersContent(car: Car) {
     Column(
@@ -288,10 +293,7 @@ fun GreetingPreview2() {
                 .fillMaxWidth()
         ) {
             TopAppBar(MaterialTheme.shapes.extraSmall)
-            ReminderItem(
-                "Title Reminder",
-                Calendar.getInstance().time
-            )
+//            ReminderItem()
 //            AddReminder(car = , reminders = )
             DatePickerSample()
         }
