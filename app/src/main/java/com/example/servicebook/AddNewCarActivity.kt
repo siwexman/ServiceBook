@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +21,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +62,7 @@ class AddNewCarActivity : ComponentActivity() {
 }
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddingNewCar(modifier: Modifier = Modifier) {
     var name by remember { mutableStateOf("") }
@@ -65,6 +72,14 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
     var fuelCapacity by remember { mutableStateOf("") }
     var registrationNumber by remember { mutableStateOf("") }
     var car by remember { mutableStateOf<Car?>(null) }
+
+    val (focusRequester) = FocusRequester.createRefs()
+    val (focusRequester2) = FocusRequester.createRefs()
+    val (focusRequester3) = FocusRequester.createRefs()
+    val (focusRequester4) = FocusRequester.createRefs()
+    val (focusRequester5) = FocusRequester.createRefs()
+
+    val keyboardContoller = LocalSoftwareKeyboardController.current
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -80,7 +95,11 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.car_name)) },
             placeholder = { Text(text = "Name your Car") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
@@ -93,10 +112,15 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.engine)) },
             placeholder = { Text(text = "Value in liters") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusRequester2.requestFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
+                .focusRequester(focusRequester)
         )
         TextField(
             value = oil,
@@ -105,10 +129,15 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.oil)) },
             placeholder = { Text(text = "Engine oil markings") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusRequester3.requestFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
+                .focusRequester(focusRequester2)
         )
         TextField(
             value = tirePressure,
@@ -117,10 +146,15 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.tire_pressure)) },
             placeholder = { Text(text = "Recommended in bars: 2,2 - 2,5 bar") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusRequester4.requestFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
+                .focusRequester(focusRequester3)
         )
         TextField(
             value = fuelCapacity,
@@ -129,10 +163,15 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.fuel_capacity)) },
             placeholder = { Text(text = "Value in liters") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusRequester5.requestFocus() }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
+                .focusRequester(focusRequester4)
         )
         TextField(
             value = registrationNumber,
@@ -141,10 +180,17 @@ fun AddingNewCar(modifier: Modifier = Modifier) {
             },
             label = { Text(stringResource(R.string.registration_numbers)) },
             placeholder = { Text(text = "Plate numbers") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardContoller?.hide()
+            }),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)
+                .focusRequester(focusRequester5)
         )
 
         Button(

@@ -20,4 +20,5 @@
     <string name="add_new_repair">Add New Repair</string>
     <string name="title">Title</string>
     <string name="confirm">Confirm</string>
+    <string name="pick_date">Pick Date</string>
 </resources>
